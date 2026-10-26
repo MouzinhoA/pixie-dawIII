@@ -8,13 +8,10 @@ import type {
   StatusAnuncio,
 } from "@/lib/tipos"
 
-// Camada de dados: única parte do sistema que conversa com o Supabase.
-// As páginas e componentes chamam estas funções e não sabem como o banco funciona.
 
 const TABELA_ITENS = "produtos"
 const TABELA_CATEGORIAS = "categorias"
 
-// Coluna e direção usadas em cada opção de ordenação
 const REGRAS_ORDENACAO: Record<OrdenacaoItens, { coluna: string; crescente: boolean }> = {
   recentes: { coluna: "criado_em", crescente: false },
   antigos: { coluna: "criado_em", crescente: true },
@@ -23,7 +20,6 @@ const REGRAS_ORDENACAO: Record<OrdenacaoItens, { coluna: string; crescente: bool
   maior_preco: { coluna: "preco", crescente: false },
 }
 
-// Converte o erro técnico do Supabase/PostgreSQL em uma mensagem compreensível
 function criarErro(acao: string, erro: { message: string; code?: string }): Error {
   let motivo = erro.message
   if (erro.code === "42501") motivo = "sem permissão no banco (verifique as políticas RLS)"
@@ -43,7 +39,6 @@ export async function buscarCategorias(): Promise<Categoria[]> {
   return data
 }
 
-// Busca os itens aplicando busca por nome, filtros e ordenação direto no banco
 export async function buscarItens(filtros?: Partial<FiltrosItens>): Promise<ItemColecao[]> {
   const ordenacao = REGRAS_ORDENACAO[filtros?.ordenacao ?? "recentes"]
 
@@ -53,7 +48,7 @@ export async function buscarItens(filtros?: Partial<FiltrosItens>): Promise<Item
     .order(ordenacao.coluna, { ascending: ordenacao.crescente })
 
   const busca = filtros?.busca?.trim()
-  if (busca) consulta = consulta.ilike("titulo", `%${busca}%`) // ilike ignora maiúsculas/minúsculas
+  if (busca) consulta = consulta.ilike("titulo", `%${busca}%`)
   if (filtros?.categoriaId) consulta = consulta.eq("categoria_id", filtros.categoriaId)
   if (filtros?.status) consulta = consulta.eq("status", filtros.status)
 
@@ -101,8 +96,6 @@ export async function alterarStatus(id: number, status: StatusAnuncio): Promise<
 }
 
 export async function excluirItem(id: number): Promise<void> {
-  // .select() devolve as linhas apagadas: se vier vazio, nada foi excluído
-  // (item inexistente ou bloqueado pelas políticas RLS)
   const { data, error } = await supabase
     .from(TABELA_ITENS)
     .delete()

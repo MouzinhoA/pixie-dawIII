@@ -7,10 +7,7 @@ import {
   type StatusAnuncio,
 } from "@/lib/tipos"
 
-// Regras de negócio e validação do item, separadas da interface.
 
-// No formulário, todo campo é texto (é o que o <input> devolve).
-// A validação confere esses textos e, se estiver tudo certo, converte para DadosItem.
 export interface ValoresFormulario {
   titulo: string
   descricao: string
@@ -28,7 +25,6 @@ export type ErrosFormulario = Partial<Record<keyof ValoresFormulario, string>>
 export const PRECO_MAXIMO = 1_000_000
 export const QUANTIDADE_MAXIMA = 9999
 
-// Aceita "1500", "1500.5" e "1.500,50" (formato brasileiro)
 export function converterPreco(texto: string): number {
   const limpo = texto.trim().replace(/\s/g, "")
   const normalizado = limpo.includes(",") ? limpo.replace(/\./g, "").replace(",", ".") : limpo
@@ -40,7 +36,7 @@ function ehUrlValida(texto: string): boolean {
     const url = new URL(texto)
     return url.protocol === "http:" || url.protocol === "https:"
   } catch {
-    return false // new URL() lança erro quando o texto não é uma URL
+    return false 
   }
 }
 
@@ -88,7 +84,6 @@ export function validarItem(valores: ValoresFormulario): {
 
   if (!LISTA_STATUS.includes(valores.status as StatusAnuncio)) erros.status = "Escolha o status."
 
-  // Regra de negócio: só pode ficar publicado se tiver preço e estoque
   if (valores.status === "disponivel" && !erros.preco && !erros.quantidade) {
     const bloqueio = motivoBloqueioPublicacao({ preco, quantidade })
     if (bloqueio) erros.status = bloqueio
@@ -112,7 +107,6 @@ export function validarItem(valores: ValoresFormulario): {
   }
 }
 
-// Caminho inverso: transforma um item do banco em valores para preencher o formulário
 export function itemParaFormulario(item?: ItemColecao): ValoresFormulario {
   return {
     titulo: item?.titulo ?? "",
@@ -127,21 +121,17 @@ export function itemParaFormulario(item?: ItemColecao): ValoresFormulario {
   }
 }
 
-// ---------- Regras do ciclo de vida do anúncio ----------
-
-// Para quais status um anúncio pode ir a partir do status atual
 const TRANSICOES_STATUS: Record<StatusAnuncio, StatusAnuncio[]> = {
   rascunho: ["disponivel"],
   disponivel: ["pausado", "vendido"],
   pausado: ["disponivel", "vendido"],
-  vendido: [], // venda concluída: para anunciar de novo, edite o item
+  vendido: [], 
 }
 
 export function proximosStatus(statusAtual: StatusAnuncio): StatusAnuncio[] {
   return TRANSICOES_STATUS[statusAtual] ?? []
 }
 
-// Devolve o motivo que impede a publicação, ou null se pode publicar
 export function motivoBloqueioPublicacao(item: { preco: number; quantidade: number }): string | null {
   if (item.preco <= 0) return "Para publicar, o preço precisa ser maior que zero."
   if (item.quantidade < 1) return "Para publicar, é preciso ter pelo menos 1 unidade."

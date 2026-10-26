@@ -1,5 +1,3 @@
-// Funções de formatação para exibir valores no padrão brasileiro
-
 const formatadorMoeda = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" })
 
 const formatadorData = new Intl.DateTimeFormat("pt-BR", {
