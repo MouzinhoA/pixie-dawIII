@@ -38,8 +38,9 @@ npm install
 
 1. Crie o arquivo `.env.local` na raiz do projeto. Ele não vai para o Git. Os valores ficam no Supabase, em **Project Settings → API**:
    ```
-   NEXT_PUBLIC_SUPABASE_URL=https://<seu-projeto>.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=<chave publishable/anon>
+   NEXT_PUBLIC_SUPABASE_URL=https://ucakjcquyawyzxrumiot.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_JoQEAGIEFgcRW5eBPPJCng_4B0ayQhx
+
    ```
    Use somente a chave **pública**. Nunca coloque a `service_role` neste arquivo.
 2. No Supabase, abra **SQL Editor** e execute uma vez o script [`supabase/ajustes_pixie_seller.sql`](supabase/ajustes_pixie_seller.sql). Ele adiciona as colunas `marca` e `quantidade`, as políticas RLS e as categorias.
@@ -82,15 +83,3 @@ docs/                     documentação do projeto
 ```
 
 O fluxo é sempre o mesmo: **página → `servicoItens` → Supabase**. As páginas não montam consultas SQL, e as regras de negócio ficam em `lib/validacao.ts`.
-
-## Capturas de tela
-
-> Adicione os prints em `docs/prints/` e eles aparecem aqui.
-
-| Painel | Listagem | Formulário | Detalhes |
-|---|---|---|---|
-| ![Painel](docs/prints/painel.png) | ![Listagem](docs/prints/listagem.png) | ![Formulário](docs/prints/formulario.png) | ![Detalhes](docs/prints/detalhes.png) |
-
-## Documentação
-
-Veja [`docs/DOCUMENTACAO.md`](docs/DOCUMENTACAO.md): tema, modelo de dados e justificativa do Supabase.
