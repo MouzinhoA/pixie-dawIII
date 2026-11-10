@@ -3,6 +3,7 @@ import { Suspense } from "react"
 import { Geist, Geist_Mono } from "next/font/google"
 import { MenuNavegacao } from "@/components/MenuNavegacao"
 import { ProvedorAvisos } from "@/components/Avisos"
+import { ProtecaoRota } from "@/components/ProtecaoRota"
 import { SCRIPT_TEMA_INICIAL } from "@/lib/tema"
 import "./globals.css"
 
@@ -39,7 +40,9 @@ export default function LayoutRaiz({ children }: LayoutProps<"/">) {
           <Suspense fallback={<div className="h-14 border-b" />}>
             <MenuNavegacao />
           </Suspense>
-          <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:py-8">{children}</main>
+          <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:py-8">
+            <ProtecaoRota>{children}</ProtecaoRota>
+          </main>
         </ProvedorAvisos>
       </body>
     </html>

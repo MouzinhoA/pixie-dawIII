@@ -2,10 +2,13 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { LayoutDashboard, Package } from "lucide-react"
+import { usePathname, useRouter } from "next/navigation"
+import { LayoutDashboard, LogOut, Package } from "lucide-react"
+import { useAvisos } from "@/components/Avisos"
 import { BotaoTema } from "@/components/BotaoTema"
-import { buttonVariants } from "@/components/ui/button"
+import { ROTAS_PUBLICAS } from "@/components/ProtecaoRota"
+import { Button, buttonVariants } from "@/components/ui/button"
+import { sair } from "@/lib/autenticacao"
 
 const LINKS = [
   { href: "/", texto: "Painel", Icone: LayoutDashboard },
@@ -14,6 +17,18 @@ const LINKS = [
 
 export function MenuNavegacao() {
   const caminhoAtual = usePathname()
+  const router = useRouter()
+  const mostrarAviso = useAvisos()
+  const naTelaLogin = ROTAS_PUBLICAS.includes(caminhoAtual)
+
+  async function sairDaConta() {
+    try {
+      await sair()
+      router.replace("/login")
+    } catch (erro) {
+      mostrarAviso("erro", (erro as Error).message)
+    }
+  }
 
   function estaAtivo(href: string) {
     if (href === "/") return caminhoAtual === "/"
@@ -28,7 +43,7 @@ export function MenuNavegacao() {
           <span className="hidden text-sm font-semibold tracking-wide text-primary uppercase sm:inline">Seller</span>
         </Link>
 
-        {LINKS.map(({ href, texto, Icone }) => (
+        {!naTelaLogin && LINKS.map(({ href, texto, Icone }) => (
           <Link
             key={href}
             href={href}
@@ -45,6 +60,12 @@ export function MenuNavegacao() {
 
         <div className="ml-auto" />
         <BotaoTema />
+        {!naTelaLogin && (
+          <Button variant="ghost" onClick={sairDaConta}>
+            <LogOut />
+            <span className="hidden sm:inline">Sair</span>
+          </Button>
+        )}
       </nav>
     </header>
   )
