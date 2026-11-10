@@ -1,3 +1,4 @@
+import { buscarIdVendedorLogado } from "@/lib/autenticacao"
 import { supabase } from "@/lib/supabase"
 import type {
   Categoria,
@@ -24,7 +25,10 @@ function criarErro(acao: string, erro: { message: string; code?: string }): Erro
   let motivo = erro.message
   if (erro.code === "42501") motivo = "sem permissão no banco (verifique as políticas RLS)"
   if (erro.code === "23514") motivo = "um dos valores viola uma regra do banco"
-  if (erro.code === "23503") motivo = "a categoria escolhida não existe"
+  if (erro.code === "23503")
+    motivo = erro.message.includes("vendedor")
+      ? "sua conta não está cadastrada como vendedor"
+      : "a categoria escolhida não existe"
   if (erro.code === "PGRST116") motivo = "item não encontrado"
   return new Error(`Não foi possível ${acao}: ${motivo}.`)
 }
@@ -41,10 +45,12 @@ export async function buscarCategorias(): Promise<Categoria[]> {
 
 export async function buscarItens(filtros?: Partial<FiltrosItens>): Promise<ItemColecao[]> {
   const ordenacao = REGRAS_ORDENACAO[filtros?.ordenacao ?? "recentes"]
+  const idVendedor = await buscarIdVendedorLogado()
 
   let consulta = supabase
     .from(TABELA_ITENS)
     .select("*")
+    .eq("vendedor_id", idVendedor)
     .order(ordenacao.coluna, { ascending: ordenacao.crescente })
 
   const busca = filtros?.busca?.trim()
@@ -58,10 +64,12 @@ export async function buscarItens(filtros?: Partial<FiltrosItens>): Promise<Item
 }
 
 export async function buscarItemPorId(id: number): Promise<ItemColecao> {
+  const idVendedor = await buscarIdVendedorLogado()
   const { data, error } = await supabase
     .from(TABELA_ITENS)
     .select("*")
     .eq("id", id)
+    .eq("vendedor_id", idVendedor)
     .single()
 
   if (error) throw criarErro("carregar o item", error)
@@ -69,9 +77,10 @@ export async function buscarItemPorId(id: number): Promise<ItemColecao> {
 }
 
 export async function cadastrarItem(dados: DadosItem): Promise<ItemColecao> {
+  const idVendedor = await buscarIdVendedorLogado()
   const { data, error } = await supabase
     .from(TABELA_ITENS)
-    .insert(dados)
+    .insert({ ...dados, vendedor_id: idVendedor })
     .select()
     .single()
 
@@ -80,10 +89,12 @@ export async function cadastrarItem(dados: DadosItem): Promise<ItemColecao> {
 }
 
 export async function atualizarItem(id: number, dados: Partial<DadosItem>): Promise<ItemColecao> {
+  const idVendedor = await buscarIdVendedorLogado()
   const { data, error } = await supabase
     .from(TABELA_ITENS)
     .update(dados)
     .eq("id", id)
+    .eq("vendedor_id", idVendedor)
     .select()
     .single()
 
@@ -96,10 +107,12 @@ export async function alterarStatus(id: number, status: StatusAnuncio): Promise<
 }
 
 export async function excluirItem(id: number): Promise<void> {
+  const idVendedor = await buscarIdVendedorLogado()
   const { data, error } = await supabase
     .from(TABELA_ITENS)
     .delete()
     .eq("id", id)
+    .eq("vendedor_id", idVendedor)
     .select("id")
 
   if (error) throw criarErro("excluir o item", error)

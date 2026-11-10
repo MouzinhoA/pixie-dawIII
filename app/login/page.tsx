@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { LoaderCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -83,6 +84,13 @@ export default function PaginaLogin() {
           {entrando ? "Entrando..." : "Entrar"}
         </Button>
       </form>
+
+      <p className="text-center text-sm text-muted-foreground">
+        Ainda não tem conta?{" "}
+        <Link href="/cadastro" className="font-medium text-primary underline-offset-4 hover:underline">
+          Criar conta
+        </Link>
+      </p>
     </div>
   )
 }

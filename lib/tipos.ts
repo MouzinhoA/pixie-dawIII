@@ -18,10 +18,11 @@ export interface ItemColecao {
   quantidade: number
   imagens: string[] | null
   status: StatusAnuncio
+  vendedor_id: string | null
   criado_em: string
 }
 
-export type DadosItem = Omit<ItemColecao, "id" | "criado_em">
+export type DadosItem = Omit<ItemColecao, "id" | "vendedor_id" | "criado_em">
 
 export const NOMES_STATUS: Record<StatusAnuncio, string> = {
   rascunho: "Rascunho",

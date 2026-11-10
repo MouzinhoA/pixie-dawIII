@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation"
 import { Carregando } from "@/components/Estados"
 import { supabase } from "@/lib/supabase"
 
-export const ROTAS_PUBLICAS = ["/login"]
+export const ROTAS_PUBLICAS = ["/login", "/cadastro"]
 
 export function ProtecaoRota({ children }: { children: React.ReactNode }) {
   const router = useRouter()
