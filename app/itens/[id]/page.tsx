@@ -9,6 +9,7 @@ import { useAvisos } from "@/components/Avisos"
 import { ConfirmarExclusao } from "@/components/ConfirmarExclusao"
 import { Carregando, MensagemErro } from "@/components/Estados"
 import { EtiquetaStatus } from "@/components/EtiquetaStatus"
+import { InteressesItem } from "@/components/InteressesItem"
 import { MiniaturaItem } from "@/components/ListaItens"
 import { buttonVariants } from "@/components/ui/button"
 import { useCarregarItem } from "@/hooks/useCarregarItem"
@@ -105,6 +106,8 @@ export default function PaginaDetalhesItem({ params }: PageProps<"/itens/[id]">)
             <h2 className="text-sm font-medium">Gerenciar anúncio</h2>
             <AcoesStatus item={item} aoAlterar={mudarStatus} />
           </div>
+
+          <InteressesItem key={item.status} itemId={item.id} />
 
           <div className="flex flex-wrap gap-2 border-t pt-4">
             <Link href={`/itens/${item.id}/editar`} className={buttonVariants({ variant: "outline" })}>

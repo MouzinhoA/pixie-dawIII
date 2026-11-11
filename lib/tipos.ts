@@ -54,3 +54,29 @@ export interface FiltrosItens {
   status: StatusAnuncio | null
   ordenacao: OrdenacaoItens
 }
+
+export type TipoInteresse = "compra" | "troca"
+
+export type StatusInteresse = "aguardando" | "negociando" | "encerrado"
+
+export interface InteresseRecebido {
+  id: number
+  tipo: TipoInteresse
+  valor_oferecido: number | null
+  item_troca: string | null
+  mensagem: string
+  status: StatusInteresse
+  criado_em: string
+  comprador_nome: string
+}
+
+export const NOMES_TIPO_INTERESSE: Record<TipoInteresse, string> = {
+  compra: "Quer comprar",
+  troca: "Quer trocar",
+}
+
+export const NOMES_STATUS_INTERESSE: Record<StatusInteresse, string> = {
+  aguardando: "Aguardando resposta",
+  negociando: "Em negociação",
+  encerrado: "Encerrado",
+}

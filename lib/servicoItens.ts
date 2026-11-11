@@ -4,9 +4,11 @@ import type {
   Categoria,
   DadosItem,
   FiltrosItens,
+  InteresseRecebido,
   ItemColecao,
   OrdenacaoItens,
   StatusAnuncio,
+  StatusInteresse,
 } from "@/lib/tipos"
 
 
@@ -30,6 +32,7 @@ function criarErro(acao: string, erro: { message: string; code?: string }): Erro
       ? "sua conta não está cadastrada como vendedor"
       : "a categoria escolhida não existe"
   if (erro.code === "PGRST116") motivo = "item não encontrado"
+  if (erro.code === "PGRST202") motivo = "rode o script supabase/interesses_vendedor.sql no banco"
   return new Error(`Não foi possível ${acao}: ${motivo}.`)
 }
 
@@ -117,4 +120,21 @@ export async function excluirItem(id: number): Promise<void> {
 
   if (error) throw criarErro("excluir o item", error)
   if (data.length === 0) throw new Error("Não foi possível excluir o item: ele não existe ou não há permissão.")
+}
+
+export async function buscarInteressesDoItem(itemId: number): Promise<InteresseRecebido[]> {
+  const { data, error } = await supabase.rpc("listar_interesses_do_produto", { p_produto_id: itemId })
+  if (error) throw criarErro("carregar os interessados", error)
+  return (data as InteresseRecebido[]).map((interesse) => ({
+    ...interesse,
+    valor_oferecido: interesse.valor_oferecido === null ? null : Number(interesse.valor_oferecido),
+  }))
+}
+
+export async function responderInteresse(interesseId: number, novoStatus: StatusInteresse): Promise<void> {
+  const { error } = await supabase.rpc("responder_interesse", {
+    p_interesse_id: interesseId,
+    p_novo_status: novoStatus,
+  })
+  if (error) throw criarErro("responder ao interesse", error)
 }
