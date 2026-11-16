@@ -80,3 +80,11 @@ export const NOMES_STATUS_INTERESSE: Record<StatusInteresse, string> = {
   negociando: "Em negociação",
   encerrado: "Encerrado",
 }
+
+export interface Mensagem {
+  id: number
+  interesse_id: number
+  autor_id: string
+  conteudo: string
+  criado_em: string
+}

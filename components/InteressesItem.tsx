@@ -1,8 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Check, Handshake, LoaderCircle, X } from "lucide-react"
+import { Check, Handshake, LoaderCircle, MessageCircle, X } from "lucide-react"
 import { useAvisos } from "@/components/Avisos"
+import { ChatInteresse } from "@/components/ChatInteresse"
 import { Carregando, MensagemErro } from "@/components/Estados"
 import { Button } from "@/components/ui/button"
 import { formatarData, formatarPreco } from "@/lib/formatacao"
@@ -95,6 +96,7 @@ function CartaoInteresse({
   aoResponder: (interesse: InteresseRecebido, novoStatus: "negociando" | "encerrado") => Promise<void>
 }) {
   const [respondendo, setRespondendo] = useState<"negociando" | "encerrado" | null>(null)
+  const [chatAberto, setChatAberto] = useState(false)
 
   async function responder(novoStatus: "negociando" | "encerrado", pergunta?: string) {
     if (pergunta && !window.confirm(pergunta)) return
@@ -160,16 +162,39 @@ function CartaoInteresse({
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Handshake className="size-4" /> Combine os detalhes da venda com o comprador.
           </p>
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={respondendo !== null}
-            onClick={() => responder("encerrado", `Encerrar a negociação com ${interesse.comprador_nome}?`)}
-          >
-            {respondendo === "encerrado" ? <LoaderCircle className="animate-spin" /> : <X />}
-            Encerrar negociação
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" variant={chatAberto ? "secondary" : "default"} onClick={() => setChatAberto((aberto) => !aberto)}>
+              <MessageCircle />
+              {chatAberto ? "Fechar conversa" : "Conversar"}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={respondendo !== null}
+              onClick={() => responder("encerrado", `Encerrar a negociação com ${interesse.comprador_nome}?`)}
+            >
+              {respondendo === "encerrado" ? <LoaderCircle className="animate-spin" /> : <X />}
+              Encerrar negociação
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {interesse.status === "encerrado" && (
+        <div>
+          <Button size="sm" variant="ghost" onClick={() => setChatAberto((aberto) => !aberto)}>
+            <MessageCircle />
+            {chatAberto ? "Fechar conversa" : "Ver conversa"}
           </Button>
         </div>
+      )}
+
+      {chatAberto && interesse.status !== "aguardando" && (
+        <ChatInteresse
+          interesseId={interesse.id}
+          nomeComprador={interesse.comprador_nome}
+          podeEnviar={interesse.status === "negociando"}
+        />
       )}
     </li>
   )

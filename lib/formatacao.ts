@@ -6,6 +6,17 @@ const formatadorData = new Intl.DateTimeFormat("pt-BR", {
   year: "numeric",
 })
 
+const formatadorDataHora = new Intl.DateTimeFormat("pt-BR", {
+  day: "2-digit",
+  month: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+})
+
+export function formatarDataHora(dataIso: string): string {
+  return formatadorDataHora.format(new Date(dataIso))
+}
+
 export function formatarPreco(valor: number): string {
   return formatadorMoeda.format(valor)
 }
