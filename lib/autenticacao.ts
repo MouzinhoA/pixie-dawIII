@@ -13,7 +13,6 @@ const MENSAGENS_ERRO: Record<string, string> = {
 }
 
 function traduzirErro(erro: { code?: string; message: string }, padrao: string): Error {
-  console.error("Erro do Supabase Auth:", erro.code, erro.message)
   return new Error((erro.code && MENSAGENS_ERRO[erro.code]) || padrao)
 }
 
