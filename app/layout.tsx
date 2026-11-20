@@ -3,6 +3,7 @@ import { Suspense } from "react"
 import { Geist, Geist_Mono } from "next/font/google"
 import { MenuNavegacao } from "@/components/MenuNavegacao"
 import { ProvedorAvisos } from "@/components/Avisos"
+import { Carregando } from "@/components/Estados"
 import { ProtecaoRota } from "@/components/ProtecaoRota"
 import { SCRIPT_TEMA_INICIAL } from "@/lib/tema"
 import "./globals.css"
@@ -41,7 +42,9 @@ export default function LayoutRaiz({ children }: LayoutProps<"/">) {
             <MenuNavegacao />
           </Suspense>
           <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:py-8">
-            <ProtecaoRota>{children}</ProtecaoRota>
+            <Suspense fallback={<Carregando texto="Verificando acesso..." />}>
+              <ProtecaoRota>{children}</ProtecaoRota>
+            </Suspense>
           </main>
         </ProvedorAvisos>
       </body>
