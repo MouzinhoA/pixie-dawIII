@@ -8,6 +8,8 @@ O Pixie tem duas aplicações:
 - **Pixie Mobile**: app dos compradores, para explorar os anúncios, demonstrar interesse e conversar com o vendedor.
 - **Pixie Seller** (este repositório): site em que o vendedor cadastra os itens da coleção e gerencia os anúncios.
 
+📄 A documentação do projeto (tema, modelo de dados, regras de negócio e justificativa da persistência) está em [docs/documentacao.md](docs/documentacao.md).
+
 ## Funcionalidades
 
 - **Conta do vendedor**: cadastro (nome, CPF, e-mail e senha) e login pelo Supabase Auth. Sem login, todas as páginas redirecionam para a tela de entrada, e cada vendedor só vê e altera os próprios itens.
@@ -86,6 +88,7 @@ lib/
   tipos.ts                tipos TypeScript (ItemColecao, StatusAnuncio, InteresseRecebido...)
   formatacao.ts           formatação de moeda e data (pt-BR)
   tema.ts                 tema claro/escuro
+docs/                     documentação do projeto
 ```
 
 O fluxo é sempre o mesmo: **página → serviço (`autenticacao`, `servicoItens` ou `servicoChat`) → Supabase**. As páginas não montam consultas SQL, e as regras de negócio ficam em `lib/validacao.ts`.
