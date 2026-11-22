@@ -57,3 +57,13 @@ Cada item pertence a **um vendedor**. Um item pode receber interesses de vários
 4. **Login e segurança:** o Supabase Auth cuida do cadastro e do login, e o RLS limita cada vendedor aos próprios dados. Uma mesma conta pode ser vendedora no painel e compradora no app.
 5. **Tempo real:** o Supabase Realtime avisa o painel quando chega uma mensagem nova no chat, sem precisar recarregar a página.
 6. **Persistência local:** só a preferência de tema claro/escuro fica no `localStorage` do navegador, porque é uma escolha do aparelho e precisa funcionar antes do login.
+
+## 4. Capturas de tela
+
+| Tela | Tema claro | Tema escuro |
+| --- | --- | --- |
+| Login | <img src="prints/login-claro.png" width="320" /> | <img src="prints/login-escuro.png" width="320" /> |
+| Painel | <img src="prints/painel-claro.png" width="320" /> | <img src="prints/painel-escuro.png" width="320" /> |
+| Meus itens (busca e filtros) | <img src="prints/itens-claro.png" width="320" /> | <img src="prints/itens-escuro.png" width="320" /> |
+| Detalhes e interessados | <img src="prints/detalhe-claro.png" width="320" /> | <img src="prints/detalhe-escuro.png" width="320" /> |
+| Conversa | <img src="prints/chat-claro.png" width="320" /> | <img src="prints/chat-escuro.png" width="320" /> |

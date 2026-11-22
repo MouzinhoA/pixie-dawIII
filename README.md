@@ -92,3 +92,13 @@ docs/                     documentação do projeto
 ```
 
 O fluxo é sempre o mesmo: **página → serviço (`autenticacao`, `servicoItens` ou `servicoChat`) → Supabase**. As páginas não montam consultas SQL, e as regras de negócio ficam em `lib/validacao.ts`.
+
+## Capturas de tela
+
+| Tela | Tema claro | Tema escuro |
+| --- | --- | --- |
+| Login | <img src="docs/prints/login-claro.png" width="380" /> | <img src="docs/prints/login-escuro.png" width="380" /> |
+| Painel | <img src="docs/prints/painel-claro.png" width="380" /> | <img src="docs/prints/painel-escuro.png" width="380" /> |
+| Meus itens | <img src="docs/prints/itens-claro.png" width="380" /> | <img src="docs/prints/itens-escuro.png" width="380" /> |
+| Detalhes e interessados | <img src="docs/prints/detalhe-claro.png" width="380" /> | <img src="docs/prints/detalhe-escuro.png" width="380" /> |
+| Conversa | <img src="docs/prints/chat-claro.png" width="380" /> | <img src="docs/prints/chat-escuro.png" width="380" /> |
