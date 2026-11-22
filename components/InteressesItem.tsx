@@ -1,11 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { Check, Handshake, LoaderCircle, MessageCircle, X } from "lucide-react"
 import { useAvisos } from "@/components/Avisos"
-import { ChatInteresse } from "@/components/ChatInteresse"
 import { Carregando, MensagemErro } from "@/components/Estados"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { formatarData, formatarPreco } from "@/lib/formatacao"
 import { buscarInteressesDoItem, responderInteresse } from "@/lib/servicoItens"
 import {
@@ -80,7 +80,7 @@ export function InteressesItem({ itemId }: { itemId: number }) {
       ) : (
         <ul className="flex flex-col gap-3">
           {interesses.map((interesse) => (
-            <CartaoInteresse key={interesse.id} interesse={interesse} aoResponder={responder} />
+            <CartaoInteresse key={interesse.id} itemId={itemId} interesse={interesse} aoResponder={responder} />
           ))}
         </ul>
       )}
@@ -89,14 +89,16 @@ export function InteressesItem({ itemId }: { itemId: number }) {
 }
 
 function CartaoInteresse({
+  itemId,
   interesse,
   aoResponder,
 }: {
+  itemId: number
   interesse: InteresseRecebido
   aoResponder: (interesse: InteresseRecebido, novoStatus: "negociando" | "encerrado") => Promise<void>
 }) {
   const [respondendo, setRespondendo] = useState<"negociando" | "encerrado" | null>(null)
-  const [chatAberto, setChatAberto] = useState(false)
+  const linkConversa = `/itens/${itemId}/conversas/${interesse.id}`
 
   async function responder(novoStatus: "negociando" | "encerrado", pergunta?: string) {
     if (pergunta && !window.confirm(pergunta)) return
@@ -163,10 +165,10 @@ function CartaoInteresse({
             <Handshake className="size-4" /> Combine os detalhes da venda com o comprador.
           </p>
           <div className="flex flex-wrap gap-2">
-            <Button size="sm" variant={chatAberto ? "secondary" : "default"} onClick={() => setChatAberto((aberto) => !aberto)}>
+            <Link href={linkConversa} className={buttonVariants({ size: "sm" })}>
               <MessageCircle />
-              {chatAberto ? "Fechar conversa" : "Conversar"}
-            </Button>
+              Conversar
+            </Link>
             <Button
               size="sm"
               variant="outline"
@@ -182,20 +184,13 @@ function CartaoInteresse({
 
       {interesse.status === "encerrado" && (
         <div>
-          <Button size="sm" variant="ghost" onClick={() => setChatAberto((aberto) => !aberto)}>
+          <Link href={linkConversa} className={buttonVariants({ size: "sm", variant: "ghost" })}>
             <MessageCircle />
-            {chatAberto ? "Fechar conversa" : "Ver conversa"}
-          </Button>
+            Ver conversa
+          </Link>
         </div>
       )}
 
-      {chatAberto && interesse.status !== "aguardando" && (
-        <ChatInteresse
-          interesseId={interesse.id}
-          nomeComprador={interesse.comprador_nome}
-          podeEnviar={interesse.status === "negociando"}
-        />
-      )}
     </li>
   )
 }

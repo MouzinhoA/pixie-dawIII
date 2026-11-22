@@ -77,10 +77,10 @@ export function ChatInteresse({ interesseId, nomeComprador, podeEnviar }: ChatIn
   if (mensagemErro) return <MensagemErro texto={mensagemErro} aoTentarNovamente={() => setTentativa((n) => n + 1)} />
 
   return (
-    <div className="flex flex-col gap-2 rounded-md border bg-muted/30 p-2">
-      <div ref={caixaMensagens} className="flex max-h-72 flex-col gap-2 overflow-y-auto p-1" aria-live="polite">
+    <div className="flex min-h-0 flex-1 flex-col gap-3 rounded-xl border bg-muted/30 p-3">
+      <div ref={caixaMensagens} className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-1" aria-live="polite">
         {mensagens.length === 0 ? (
-          <p className="py-4 text-center text-xs text-muted-foreground">
+          <p className="m-auto py-4 text-center text-sm text-muted-foreground">
             Nenhuma mensagem ainda. Mande um oi para {nomeComprador}!
           </p>
         ) : (
