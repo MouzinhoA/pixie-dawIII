@@ -5,16 +5,20 @@ Projeto 1 da disciplina Desenvolvimento de Aplicações Web 3 (IFPB, Campus Espe
 
 O Pixie tem duas aplicações:
 
-- **Pixie Mobile**: app dos compradores, para explorar, favoritar e fazer propostas.
+- **Pixie Mobile**: app dos compradores, para explorar os anúncios, demonstrar interesse e conversar com o vendedor.
 - **Pixie Seller** (este repositório): site em que o vendedor cadastra os itens da coleção e gerencia os anúncios.
 
 ## Funcionalidades
 
+- **Conta do vendedor**: cadastro (nome, CPF, e-mail e senha) e login pelo Supabase Auth. Sem login, todas as páginas redirecionam para a tela de entrada, e cada vendedor só vê e altera os próprios itens.
 - **Painel**: totais por status do anúncio, valor anunciado, valor vendido, itens por categoria e últimos cadastros.
 - **CRUD completo do Item de Coleção**: cadastrar, listar, ver detalhes, editar e excluir (com confirmação).
 - **Listagem**: busca pelo nome, filtro por categoria e por status, e ordenação por data, nome ou preço.
 - **Validação do formulário**: campos obrigatórios, tamanho dos textos, preço no formato brasileiro, quantidade inteira e URL da imagem.
-- **Ciclo de vida do anúncio**: rascunho → publicado ⇄ pausado → vendido. Só aparecem as transições permitidas, e não é possível publicar um item sem preço ou sem estoque.
+- **Ciclo de vida do anúncio**: rascunho → publicado ⇄ pausado → vendido. Só aparecem as transições permitidas, e não é possível publicar um item sem preço ou sem estoque. Rascunhos e anúncios pausados não aparecem para os compradores.
+- **Interesses recebidos**: na página do item, o vendedor vê as propostas de compra ou troca feitas pelos compradores no Pixie Mobile e pode aceitar (inicia a negociação), recusar ou encerrar. Marcar o item como vendido encerra os interesses abertos.
+- **Chat com o comprador**: depois que a proposta é aceita, vendedor e comprador conversam em uma página própria, com mensagens em tempo real (Supabase Realtime). Quando o interesse é encerrado, a conversa fica só para leitura.
+- **Tema claro / escuro**: botão no menu, com a escolha salva no navegador.
 - **Feedback**: mensagens de sucesso e erro, indicadores de carregamento, telas de lista vazia e de erro com a opção "Tentar novamente".
 - **Layout responsivo**: tabela no computador e cards no celular.
 
@@ -43,8 +47,7 @@ npm install
 
    ```
    Use somente a chave **pública**. Nunca coloque a `service_role` neste arquivo.
-2. No Supabase, abra **SQL Editor** e execute uma vez o script [`supabase/ajustes_pixie_seller.sql`](supabase/ajustes_pixie_seller.sql). Ele adiciona as colunas `marca` e `quantidade`, as políticas RLS e as categorias.
-3. Inicie o servidor:
+2. Inicie o servidor:
    ```bash
    npm run dev          # http://localhost:3000
    ```
@@ -64,22 +67,25 @@ npm run dev:rede     # ou: npm run build && npm run start:rede
 
 ```
 app/                      páginas (rotas do Next.js)
+  login/, cadastro/       entrada e criação de conta do vendedor
   page.tsx                painel inicial
   itens/page.tsx          listagem com busca, filtros e ordenação
-  itens/novo/page.tsx     cadastro
-  itens/[id]/page.tsx     detalhes, status e exclusão
+  itens/novo/page.tsx     cadastro de item
+  itens/[id]/page.tsx     detalhes, status, exclusão e interesses recebidos
   itens/[id]/editar/      edição
-components/               componentes de interface (FormularioItem, ListaItens, ConfirmarExclusao...)
+  itens/[id]/conversas/[interesseId]/  chat com o comprador
+components/               componentes de interface (FormularioItem, ListaItens, InteressesItem, ChatInteresse, ProtecaoRota...)
   ui/                     componentes base do shadcn/ui
 hooks/useCarregarItem.ts  carrega um item pelo id, com estados de carregamento e erro
 lib/
   supabase.ts             cliente do Supabase
-  servicoItens.ts         camada de dados: única parte que acessa o banco
-  validacao.ts            validação do formulário e regras de negócio do anúncio
-  tipos.ts                tipos TypeScript (ItemColecao, StatusAnuncio...)
+  autenticacao.ts         cadastro, login e logout do vendedor
+  servicoItens.ts         itens e interesses recebidos
+  servicoChat.ts          mensagens do chat, com tempo real
+  validacao.ts            validação dos formulários e regras de negócio do anúncio
+  tipos.ts                tipos TypeScript (ItemColecao, StatusAnuncio, InteresseRecebido...)
   formatacao.ts           formatação de moeda e data (pt-BR)
-supabase/                 script SQL de ajuste do banco
-docs/                     documentação do projeto
+  tema.ts                 tema claro/escuro
 ```
 
-O fluxo é sempre o mesmo: **página → `servicoItens` → Supabase**. As páginas não montam consultas SQL, e as regras de negócio ficam em `lib/validacao.ts`.
+O fluxo é sempre o mesmo: **página → serviço (`autenticacao`, `servicoItens` ou `servicoChat`) → Supabase**. As páginas não montam consultas SQL, e as regras de negócio ficam em `lib/validacao.ts`.
